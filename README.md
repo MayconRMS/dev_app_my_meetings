@@ -1,2 +1,7 @@
-# dev_app_my_meetings
-App didatico simples crud com Spring
+## Aplicação simples com crud usuário e reuniões
+
+- Java 11
+- Maven
+- Spring Boot
+- H2 bd
+- Lombok
