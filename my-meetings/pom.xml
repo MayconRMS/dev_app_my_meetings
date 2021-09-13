@@ -12,7 +12,7 @@
 	<artifactId>my-meetings</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>my-meetings</name>
-	<description>App Crud de Reuniões</description>
+	<description>App Crud de reuniões</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
