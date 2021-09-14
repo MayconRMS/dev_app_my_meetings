@@ -1,6 +1,6 @@
 package br.com.mrms.meetings.model;
 
-public enum MeetingStates {
+public enum MeetingStatus {
 
 	OPEN, TO_RUNNING, FINISH, CANCEL
 
