@@ -34,7 +34,7 @@ public class Meeting {
 
 	private boolean viseble;
 
-	//private MeetingCategory category;
+	private MeetingCategory category;
 
 	//private User user;
 
