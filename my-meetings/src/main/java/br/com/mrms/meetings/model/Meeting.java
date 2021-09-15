@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -20,6 +21,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "meetings")
+@NamedQuery(name = "Meeting.meetingForCategory", query = "select m from Meeting m inner join m.category c where c.name = ?1")
 public class Meeting {
 
 	@Id
