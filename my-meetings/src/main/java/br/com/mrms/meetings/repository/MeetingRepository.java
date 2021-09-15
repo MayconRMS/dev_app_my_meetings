@@ -2,8 +2,6 @@ package br.com.mrms.meetings.repository;
 
 import java.util.List;
 
-import javax.persistence.NamedQuery;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,6 +23,5 @@ public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 			+ "where c.name = ?1")
 	public List<Meeting> findByNameCategory(String categoryName);
 	
-	//Utilizando @@NamedQuery na entidade
 	public List<Meeting> meetingForCategory(String categoryName);
 }
