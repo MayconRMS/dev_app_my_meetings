@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,12 +31,15 @@ public class Meeting {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@NotBlank(message = "Campo descrição não pode estar vazio")
+	@Size(min = 5, max = 150, message = "Campo descrição deve ter 5 e 150 letras")
 	@Column(name = "description", nullable = false, length = 150)
 	private String description;
 
 	@Enumerated(EnumType.STRING)
 	private MeetingStatus status;
 
+	@FutureOrPresent(message="Campo data da reunião deve ser futura")
 	private LocalDate dateMeeting;
 
 	private boolean viseble;
