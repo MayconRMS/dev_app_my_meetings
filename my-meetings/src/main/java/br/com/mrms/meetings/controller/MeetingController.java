@@ -1,6 +1,7 @@
 package br.com.mrms.meetings.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mrms.meetings.model.Meeting;
@@ -21,8 +23,14 @@ public class MeetingController {
 	private MeetingRepository meetingRepository;
 
 	@GetMapping("/meeting")
-	public List<Meeting> allMeetings() {
-		return meetingRepository.findAll();
+	public List<Meeting> allMeetings(@RequestParam Map<String, String> paramets) {
+		if (paramets.isEmpty()) {
+			return meetingRepository.findAll();
+		}
+
+		String description = paramets.get("descricao");
+		return meetingRepository.findByDescriptionLike("%" + description + "%");
+
 	}
 
 	@GetMapping("/meeting/{id}")
