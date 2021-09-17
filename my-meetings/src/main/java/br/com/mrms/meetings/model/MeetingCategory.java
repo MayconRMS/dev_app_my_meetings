@@ -22,8 +22,8 @@ public class MeetingCategory {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@NotBlank(message = "Campo name não pode estar vazio")
-	@Size(min = 2, max = 150, message = "Campo name deve ter 2 e 50 letras")
+	@NotBlank(message = "{meetingCategory.name.not-blank}")
+	@Size(min = 2, max = 150, message = "{meetingCategory.name.size}")
 	@Column(length = 50)
 	private String name;
 

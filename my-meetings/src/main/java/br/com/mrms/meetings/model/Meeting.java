@@ -31,15 +31,15 @@ public class Meeting {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
-	@NotBlank(message = "Campo descrição não pode estar vazio")
-	@Size(min = 5, max = 150, message = "Campo descrição deve ter 5 e 150 letras")
+	@NotBlank(message = "{meeting.description.not-blank}")
+	@Size(min = 5, max = 150, message = "{meeting.description.size}")
 	@Column(name = "description", nullable = false, length = 150)
 	private String description;
 
 	@Enumerated(EnumType.STRING)
 	private MeetingStatus status;
 
-	@FutureOrPresent(message="Campo data da reunião deve ser futura")
+	@FutureOrPresent(message="{meeting.description.future-or-present}")
 	private LocalDate dateMeeting;
 
 	private boolean viseble;
