@@ -46,7 +46,7 @@ public class MeetingController {
 
 	@PutMapping("/meeting/{id}")
 	public Meeting replaceEmployee(@RequestBody Meeting newMeeting, @PathVariable Integer id) {
-		return meetingService.replaceEmployee(newMeeting,id);
+		return meetingService.updateEmployee(id, newMeeting);
 	}
 
 	@DeleteMapping("/meeting/{id}")

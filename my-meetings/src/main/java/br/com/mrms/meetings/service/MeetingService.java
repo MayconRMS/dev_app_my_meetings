@@ -24,7 +24,6 @@ public class MeetingService {
 
 	public List<Meeting> getMeetingsForDescription(String description) {
 		return meetingRepository.findByDescriptionLike("%" + description + "%");
-
 	}
 
 	public Meeting getMeetingForId(Integer id) {
@@ -35,14 +34,11 @@ public class MeetingService {
 		return meetingRepository.save(meeting);
 	}
 
-	public Meeting replaceEmployee(Meeting newMeeting, Integer id) {
-		return meetingRepository.findById(id).map(meeting -> {
-			meeting.setDescription(newMeeting.getDescription());
-			return meetingRepository.save(meeting);
-		}).orElseGet(() -> {
-			newMeeting.setId(id);
-			return meetingRepository.save(newMeeting);
-		});
+	public Meeting updateEmployee(Integer id, Meeting meeting) {
+		if (!meetingRepository.existsById(id))
+			throw new EntityNotFoundException();
+		meeting.setId(id);
+		return meetingRepository.save(meeting);
 	}
 
 	public void deleteMeetingforId(Integer id) {
@@ -54,47 +50,39 @@ public class MeetingService {
 
 		if (!MeetingStatus.OPEN.equals(meeting.getStatus()))
 			throw new MeetingStatusException();
-		
-		meeting.setStatus(MeetingStatus.TO_RUNNING);
 
-		meetingRepository.save(meeting);
-		return meeting;
+		meeting.setStatus(MeetingStatus.START);
+		return saveMeeting(meeting);
 	}
-	
+
 	public Meeting finishMeetingForId(Integer id) {
 		Meeting meeting = getMeetingForId(id);
 
-		if (!MeetingStatus.CANCEL.equals(meeting.getStatus()))
+		if (MeetingStatus.CANCELED.equals(meeting.getStatus()))
 			throw new MeetingStatusException();
-		
-		meeting.setStatus(MeetingStatus.FINISH);
 
-		meetingRepository.save(meeting);
-		return meeting;
+		meeting.setStatus(MeetingStatus.FINISH);
+		return saveMeeting(meeting);
 	}
-	
+
 	public Meeting cancelMeetingForId(Integer id) {
 		Meeting meeting = getMeetingForId(id);
 
-		if (!MeetingStatus.FINISH.equals(meeting.getStatus()))
+		if (MeetingStatus.FINISH.equals(meeting.getStatus()))
 			throw new MeetingStatusException();
-		
-		meeting.setStatus(MeetingStatus.CANCEL);
 
-		meetingRepository.save(meeting);
-		return meeting;
+		meeting.setStatus(MeetingStatus.CANCELED);
+		return saveMeeting(meeting);
 	}
-	
+
 	public Meeting openMeetingForId(Integer id) {
 		Meeting meeting = getMeetingForId(id);
 
-		if (!MeetingStatus.TO_RUNNING.equals(meeting.getStatus()))
+		if (MeetingStatus.OPEN.equals(meeting.getStatus()))
 			throw new MeetingStatusException();
-		
-		meeting.setStatus(MeetingStatus.OPEN);
 
-		meetingRepository.save(meeting);
-		return meeting;
+		meeting.setStatus(MeetingStatus.OPEN);
+		return saveMeeting(meeting);
 	}
 
 }
