@@ -8,3 +8,6 @@
 
 - Link app: http://localhost:8080/mymeetings/
 - Link h2 : http://localhost:8080/mymeetings/h2-console/
+
+## Teste de Integração com 
+- SpringBootTest
