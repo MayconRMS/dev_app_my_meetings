@@ -20,11 +20,11 @@ public class MeetingServiceIntegrationTest {
 	@Test
 	void HaveStartMeeting() {
 		Meeting meeting = meetingService.startMeetingForId(3);
-		Assertions.assertEquals(MeetingStatus.TO_RUNNING, meeting.getStatus());
+		Assertions.assertEquals(MeetingStatus.START, meeting.getStatus());
 	}
 
 	@Test
-	void NotHaveStartMeeting() {
+	void NotHaveStartMeetingFinish() {
 		Meeting meeting = meetingService.getMeetingForId(3);
 		meeting.setStatus(MeetingStatus.FINISH);
 		meetingService.saveMeeting(meeting);
