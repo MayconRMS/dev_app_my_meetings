@@ -7,7 +7,9 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.mrms.meetings.exception.MeetingStatusException;
 import br.com.mrms.meetings.model.Meeting;
+import br.com.mrms.meetings.model.MeetingStatus;
 import br.com.mrms.meetings.repository.MeetingRepository;
 
 @Service
@@ -45,6 +47,54 @@ public class MeetingService {
 
 	public void deleteMeetingforId(Integer id) {
 		meetingRepository.deleteById(id);
+	}
+
+	public Meeting startMeetingForId(Integer id) {
+		Meeting meeting = getMeetingForId(id);
+
+		if (!MeetingStatus.OPEN.equals(meeting.getStatus()))
+			throw new MeetingStatusException();
+		
+		meeting.setStatus(MeetingStatus.TO_RUNNING);
+
+		meetingRepository.save(meeting);
+		return meeting;
+	}
+	
+	public Meeting finishMeetingForId(Integer id) {
+		Meeting meeting = getMeetingForId(id);
+
+		if (!MeetingStatus.CANCEL.equals(meeting.getStatus()))
+			throw new MeetingStatusException();
+		
+		meeting.setStatus(MeetingStatus.FINISH);
+
+		meetingRepository.save(meeting);
+		return meeting;
+	}
+	
+	public Meeting cancelMeetingForId(Integer id) {
+		Meeting meeting = getMeetingForId(id);
+
+		if (!MeetingStatus.FINISH.equals(meeting.getStatus()))
+			throw new MeetingStatusException();
+		
+		meeting.setStatus(MeetingStatus.CANCEL);
+
+		meetingRepository.save(meeting);
+		return meeting;
+	}
+	
+	public Meeting openMeetingForId(Integer id) {
+		Meeting meeting = getMeetingForId(id);
+
+		if (!MeetingStatus.TO_RUNNING.equals(meeting.getStatus()))
+			throw new MeetingStatusException();
+		
+		meeting.setStatus(MeetingStatus.OPEN);
+
+		meetingRepository.save(meeting);
+		return meeting;
 	}
 
 }

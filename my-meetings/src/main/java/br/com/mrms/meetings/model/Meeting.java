@@ -37,7 +37,7 @@ public class Meeting {
 	private String description;
 
 	@Enumerated(EnumType.STRING)
-	private MeetingStatus status;
+	private MeetingStatus status = MeetingStatus.OPEN;
 
 	@FutureOrPresent(message="{meeting.description.future-or-present}")
 	private LocalDate dateMeeting;
