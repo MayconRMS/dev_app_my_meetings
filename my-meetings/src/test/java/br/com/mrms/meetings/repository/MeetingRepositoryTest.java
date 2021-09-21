@@ -2,8 +2,6 @@ package br.com.mrms.meetings.repository;
 
 import java.util.List;
 
-import javax.persistence.NamedQuery;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

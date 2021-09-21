@@ -16,48 +16,41 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.mrms.meetings.model.Meeting;
-import br.com.mrms.meetings.repository.MeetingRepository;
+import br.com.mrms.meetings.service.MeetingService;
 
 @RestController
 public class MeetingController {
 
 	@Autowired
-	private MeetingRepository meetingRepository;
+	private MeetingService meetingService;
 
 	@GetMapping("/meeting")
 	public List<Meeting> allMeetings(@RequestParam Map<String, String> paramets) {
 		if (paramets.isEmpty()) {
-			return meetingRepository.findAll();
+			return meetingService.getAllMeetings();
 		}
 
 		String description = paramets.get("descricao");
-		return meetingRepository.findByDescriptionLike("%" + description + "%");
-
+		return meetingService.getMeetingsForDescription("%" + description + "%");
 	}
 
 	@GetMapping("/meeting/{id}")
 	public Meeting meeting(@PathVariable Integer id) {
-		return meetingRepository.findById(id).orElse(null);
+		return meetingService.getMeetingForId(id);
 	}
 
 	@PostMapping("/meeting")
 	public Meeting saveMeeting(@Valid @RequestBody Meeting meeting) {
-		return meetingRepository.save(meeting);
+		return meetingService.saveMeeting(meeting);
 	}
 
 	@PutMapping("/meeting/{id}")
 	public Meeting replaceEmployee(@RequestBody Meeting newMeeting, @PathVariable Integer id) {
-		return meetingRepository.findById(id).map(meeting -> {
-			meeting.setDescription(newMeeting.getDescription());
-			return meetingRepository.save(meeting);
-		}).orElseGet(() -> {
-			newMeeting.setId(id);
-			return meetingRepository.save(newMeeting);
-		});
+		return meetingService.replaceEmployee(newMeeting,id);
 	}
 
 	@DeleteMapping("/meeting/{id}")
 	public void deleteMeeting(@PathVariable Integer id) {
-		meetingRepository.deleteById(id);
+		meetingService.deleteMeetingforId(id);
 	}
 }
