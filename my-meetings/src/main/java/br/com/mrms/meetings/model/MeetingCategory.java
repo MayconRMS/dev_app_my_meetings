@@ -23,7 +23,7 @@ public class MeetingCategory {
 	private Integer id;
 
 	@NotBlank(message = "{meetingCategory.name.not-blank}")
-	@Size(min = 2, max = 150, message = "{meetingCategory.name.size}")
+	@Size(min = 2, max = 50, message = "{meetingCategory.name.size}")
 	@Column(length = 50)
 	private String name;
 
