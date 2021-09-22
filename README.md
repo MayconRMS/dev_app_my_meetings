@@ -5,7 +5,6 @@
 - Spring Boot
 - H2 bd
 - Lombok
-
 - Link app: http://localhost:8080/mymeetings/
 - Link h2 : http://localhost:8080/mymeetings/h2-console/
 
@@ -13,7 +12,15 @@
 - SpringBootTest - carrega todo contexto em memoria
 
 ## Teste Unitário:
-- Mockito - instancia classes e controla o comportamento dos métodos
+- [Mockito](https://site.mockito.org/) - instancia classes e controla o comportamento dos métodos
 
 ## Biblioteca:
-- ModelMapper - mapeamento de objetos (http://modelmapper.org/)
+- [ModelMapper](http://modelmapper.org/) - mapeamento de objetos 
+
+## [Hateoas](https://spring.io/projects/spring-hateoas)
+- HiperLinks = representação de recursos com links
+	-> Recurso tem que ter o link de referência a ele mesmo (withSelRel())
+```sh
+        EntityModel<MeetingResponse> meetingModel = EntityModel.of(meetingResponse, WebMvcLinkBuilder
+				.linkTo(WebMvcLinkBuilder.methodOn(MeetingController.class).oneMeeting(id)).withSelfRel());
+```

@@ -35,7 +35,7 @@ public class MeetingCategoryController {
 	private ModelMapper modelMapper;
 
 	@GetMapping
-	public List<MeetingCategoryResponse> allMeetings(@RequestParam Map<String, String> paramets) {
+	public List<MeetingCategoryResponse> allMeetingsCategory(@RequestParam Map<String, String> paramets) {
 		List<MeetingCategory> listMeetingCategory = new ArrayList<>();
 
 		if (paramets.isEmpty()) {
@@ -50,20 +50,20 @@ public class MeetingCategoryController {
 	}
 
 	@GetMapping("/{id}")
-	public MeetingCategoryResponse meeting(@PathVariable Integer id) {
+	public MeetingCategoryResponse OneMeetingCategory(@PathVariable Integer id) {
 		MeetingCategory meetingCategory = meetingCategoryService.getMeetingCategoryForId(id);
 		return modelMapper.map(meetingCategory, MeetingCategoryResponse.class);
 	}
 
 	@PostMapping
-	public MeetingCategoryResponse saveMeeting(@Valid @RequestBody MeetingCategoryRequest meetingCategoryRequest) {
+	public MeetingCategoryResponse saveMeetingCategory(@Valid @RequestBody MeetingCategoryRequest meetingCategoryRequest) {
 		MeetingCategory meetingCategory = modelMapper.map(meetingCategoryRequest, MeetingCategory.class);
 		return modelMapper.map(meetingCategoryService.saveMeetingCategory(meetingCategory),
 				MeetingCategoryResponse.class);
 	}
 
 	@PutMapping("/{id}")
-	public MeetingCategoryResponse updateMeeting(@RequestBody MeetingCategoryRequest meetingCategoryRequest,
+	public MeetingCategoryResponse updateMeetingCategory(@RequestBody MeetingCategoryRequest meetingCategoryRequest,
 			@PathVariable Integer id) {
 		MeetingCategory meetingCategory = modelMapper.map(meetingCategoryRequest, MeetingCategory.class);
 		return modelMapper.map(meetingCategoryService.updateMeetingCategory(id, meetingCategory),
@@ -71,7 +71,7 @@ public class MeetingCategoryController {
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteMeeting(@PathVariable Integer id) {
+	public void deleteMeetingCategory(@PathVariable Integer id) {
 		meetingCategoryService.deleteMeetingCategoryforId(id);
 
 	}

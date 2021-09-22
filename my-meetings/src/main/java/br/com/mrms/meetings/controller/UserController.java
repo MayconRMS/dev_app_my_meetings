@@ -48,7 +48,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public UserResponse user(@PathVariable Integer id) {
+	public UserResponse OneUser(@PathVariable Integer id) {
 		User user = userService.getUserforId(id);
 		return modelMapper.map(user, UserResponse.class);
 	}
