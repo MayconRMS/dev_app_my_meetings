@@ -11,4 +11,7 @@
 
 ## Teste de Integração:
 - SpringBootTest - carrega todo contexto em memoria [lento]
-- Mockito - instancia classes e controla o comportamento dos métodos 
+- Mockito - instancia classes e controla o comportamento dos métodos
+
+## Biblioteca
+- ModelMapper - mapeamento de objetos (http://modelmapper.org/)

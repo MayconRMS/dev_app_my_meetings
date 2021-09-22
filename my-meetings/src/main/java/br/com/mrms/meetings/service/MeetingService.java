@@ -34,7 +34,7 @@ public class MeetingService {
 		return meetingRepository.save(meeting);
 	}
 
-	public Meeting updateEmployee(Integer id, Meeting meeting) {
+	public Meeting updateMeeting(Integer id, Meeting meeting) {
 		if (!meetingRepository.existsById(id))
 			throw new EntityNotFoundException();
 		meeting.setId(id);

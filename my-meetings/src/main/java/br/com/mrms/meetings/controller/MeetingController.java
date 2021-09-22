@@ -3,7 +3,6 @@ package br.com.mrms.meetings.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.mrms.meetings.controller.request.MeetingRequest;
 import br.com.mrms.meetings.controller.response.MeetingResponse;
 import br.com.mrms.meetings.model.Meeting;
 import br.com.mrms.meetings.service.MeetingService;
@@ -53,15 +53,15 @@ public class MeetingController {
 	}
 
 	@PostMapping("/meeting")
-	public MeetingResponse saveMeeting(@Valid @RequestBody Meeting meeting) {
-		Meeting newMeeting = meetingService.saveMeeting(meeting);
-		return modelMapper.map(newMeeting, MeetingResponse.class);
+	public MeetingResponse saveMeeting(@Valid @RequestBody MeetingRequest meetingRequest) {
+		Meeting meeting = modelMapper.map(meetingRequest, Meeting.class);
+		return modelMapper.map(meetingService.saveMeeting(meeting), MeetingResponse.class);
 	}
 
 	@PutMapping("/meeting/{id}")
-	public MeetingResponse replaceEmployee(@RequestBody Meeting newMeeting, @PathVariable Integer id) {
-		Meeting meeting = meetingService.updateEmployee(id, newMeeting);
-		return modelMapper.map(meeting, MeetingResponse.class);
+	public MeetingResponse updateMeeting(@RequestBody MeetingRequest meetingRequest, @PathVariable Integer id) {
+		Meeting meeting = modelMapper.map(meetingRequest, Meeting.class);
+		return modelMapper.map(meetingService.updateMeeting(id, meeting), MeetingResponse.class);
 	}
 
 	@DeleteMapping("/meeting/{id}")
