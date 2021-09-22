@@ -10,5 +10,10 @@
 - Link h2 : http://localhost:8080/mymeetings/h2-console/
 
 ## Teste de Integração:
-- SpringBootTest - carrega todo contexto em memoria [lento]
-- Mockito - instancia classes e controla o comportamento dos métodos 
+- SpringBootTest - carrega todo contexto em memoria
+
+## Teste Unitário:
+- Mockito - instancia classes e controla o comportamento dos métodos
+
+## Biblioteca:
+- ModelMapper - mapeamento de objetos (http://modelmapper.org/)
