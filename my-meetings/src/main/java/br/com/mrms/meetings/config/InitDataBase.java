@@ -32,7 +32,7 @@ public class InitDataBase {
 	@Bean
 	CommandLineRunner executar() {
 		return args -> {
-			insertMeeting();
+			insertMeeting();insertMeeting2();
 		};
 	}
 
@@ -63,7 +63,26 @@ public class InitDataBase {
 		meeting2.setCategory(category);
 		meeting2.setUser(user);
 		meetingRepository.save(meeting2);
-		
+	}
+	
+	private void insertMeeting2() {
+		User user = new User();
+		user.setName("User");
+		user.setPassword("123456");
+		userRepository.save(user);
+
+		MeetingCategory category = new MeetingCategory();
+		category.setName("Class");
+		meetingCategoryRepository.save(category);
+
+		Meeting meeting = new Meeting();
+		meeting.setDescription("Class Spring Security");
+		meeting.setDateMeeting(LocalDate.now().plusDays(1));
+		meeting.setStatus(MeetingStatus.OPEN);
+		meeting.setViseble(true);
+		meeting.setCategory(category);
+		meeting.setUser(user);
+		meetingRepository.save(meeting);
 	}
 
 }

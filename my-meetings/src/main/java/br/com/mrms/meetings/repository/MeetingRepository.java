@@ -12,16 +12,16 @@ import br.com.mrms.meetings.model.MeetingCategory;
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Integer> {
 
-	public List<Meeting> findByDescription(String description);
+	List<Meeting> findByDescription(String description);
 	
-	public List<Meeting> findByDescriptionLike(String description);
+	List<Meeting> findByDescriptionLike(String description);
 	
-	public List<Meeting> findByCategory(MeetingCategory meetingCategory);
+	List<Meeting> findByCategory(MeetingCategory meetingCategory);
 	
 	@Query("select m from Meeting m "
 			+ "inner join m.category c "
 			+ "where c.name = ?1")
-	public List<Meeting> findByNameCategory(String categoryName);
+	List<Meeting> findByNameCategory(String categoryName);
 	
-	public List<Meeting> meetingForCategory(String categoryName);
+	List<Meeting> meetingForCategory(String categoryName);
 }
