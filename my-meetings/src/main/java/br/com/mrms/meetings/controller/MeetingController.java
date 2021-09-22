@@ -1,10 +1,14 @@
 package br.com.mrms.meetings.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.mrms.meetings.controller.response.MeetingResponse;
 import br.com.mrms.meetings.model.Meeting;
 import br.com.mrms.meetings.service.MeetingService;
 
@@ -24,29 +29,39 @@ public class MeetingController {
 	@Autowired
 	private MeetingService meetingService;
 
-	@GetMapping("/meeting")
-	public List<Meeting> allMeetings(@RequestParam Map<String, String> paramets) {
-		if (paramets.isEmpty()) {
-			return meetingService.getAllMeetings();
-		}
+	@Autowired
+	private ModelMapper modelMapper;
 
-		String description = paramets.get("descricao");
-		return meetingService.getMeetingsForDescription("%" + description + "%");
+	@GetMapping("/meeting")
+	public List<MeetingResponse> allMeetings(@RequestParam Map<String, String> paramets) {
+		List<Meeting> listMeeting = new ArrayList<>();
+
+		if (paramets.isEmpty()) {
+			listMeeting = meetingService.getAllMeetings();
+		} else {
+			String description = paramets.get("descricao");
+			listMeeting = meetingService.getMeetingsForDescription("%" + description + "%");
+		}
+		return listMeeting.stream().map(meeting -> modelMapper.map(meeting, MeetingResponse.class))
+				.collect(Collectors.toList());
 	}
 
 	@GetMapping("/meeting/{id}")
-	public Meeting meeting(@PathVariable Integer id) {
-		return meetingService.getMeetingForId(id);
+	public MeetingResponse meeting(@PathVariable Integer id) {
+		Meeting meeting = meetingService.getMeetingForId(id);
+		return modelMapper.map(meeting, MeetingResponse.class);
 	}
 
 	@PostMapping("/meeting")
-	public Meeting saveMeeting(@Valid @RequestBody Meeting meeting) {
-		return meetingService.saveMeeting(meeting);
+	public MeetingResponse saveMeeting(@Valid @RequestBody Meeting meeting) {
+		Meeting newMeeting = meetingService.saveMeeting(meeting);
+		return modelMapper.map(newMeeting, MeetingResponse.class);
 	}
 
 	@PutMapping("/meeting/{id}")
-	public Meeting replaceEmployee(@RequestBody Meeting newMeeting, @PathVariable Integer id) {
-		return meetingService.updateEmployee(id, newMeeting);
+	public MeetingResponse replaceEmployee(@RequestBody Meeting newMeeting, @PathVariable Integer id) {
+		Meeting meeting = meetingService.updateEmployee(id, newMeeting);
+		return modelMapper.map(meeting, MeetingResponse.class);
 	}
 
 	@DeleteMapping("/meeting/{id}")
