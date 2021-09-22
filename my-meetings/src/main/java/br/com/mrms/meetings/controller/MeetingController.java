@@ -1,6 +1,7 @@
 package br.com.mrms.meetings.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,6 +10,8 @@ import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,9 +52,18 @@ public class MeetingController {
 	}
 
 	@GetMapping("/{id}")
-	public MeetingResponse meeting(@PathVariable Integer id) {
+	public EntityModel<MeetingResponse> oneMeeting(@PathVariable Integer id) {
 		Meeting meeting = meetingService.getMeetingForId(id);
-		return modelMapper.map(meeting, MeetingResponse.class);
+		MeetingResponse meetingResponse = modelMapper.map(meeting, MeetingResponse.class);
+
+		EntityModel<MeetingResponse> meetingModel = EntityModel.of(meetingResponse, 
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingController.class).oneMeeting(id)).withSelfRel(),
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingController.class).allMeetings(new HashMap<>())).withRel("meetings"),
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingCategoryController.class).OneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
+				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).OneUser(meetingResponse.getUserId())).withRel("user")
+				);
+
+		return meetingModel;
 	}
 
 	@PostMapping
