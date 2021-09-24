@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,12 +39,12 @@ public class MeetingController {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private MeetingModelAssembler meetingModelAssembler;
 
 	@GetMapping
-	public List<MeetingResponse> allMeetings(@RequestParam Map<String, String> paramets) {
+	public CollectionModel<EntityModel<MeetingResponse>> allMeetings(@RequestParam Map<String, String> paramets) {
 		List<Meeting> listMeeting = new ArrayList<>();
 
 		if (paramets.isEmpty()) {
@@ -52,8 +53,11 @@ public class MeetingController {
 			String description = paramets.get("descricao");
 			listMeeting = meetingService.getMeetingsForDescription("%" + description + "%");
 		}
-		return listMeeting.stream().map(meeting -> modelMapper.map(meeting, MeetingResponse.class))
+		List<EntityModel<MeetingResponse>> meetingModel = listMeeting.stream().map(meetingModelAssembler::toModel)
 				.collect(Collectors.toList());
+		
+		return CollectionModel.of(meetingModel,
+				linkTo(methodOn(MeetingController.class).allMeetings(new HashMap<>())).withSelfRel());
 	}
 
 	@GetMapping("/{id}")
