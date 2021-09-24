@@ -1,5 +1,7 @@
 package br.com.mrms.meetings.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +13,6 @@ import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.mrms.meetings.controller.assembler.MeetingModelAssembler;
 import br.com.mrms.meetings.controller.request.MeetingRequest;
 import br.com.mrms.meetings.controller.response.MeetingResponse;
 import br.com.mrms.meetings.model.Meeting;
@@ -36,6 +38,9 @@ public class MeetingController {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private MeetingModelAssembler meetingModelAssembler;
 
 	@GetMapping
 	public List<MeetingResponse> allMeetings(@RequestParam Map<String, String> paramets) {
@@ -54,16 +59,7 @@ public class MeetingController {
 	@GetMapping("/{id}")
 	public EntityModel<MeetingResponse> oneMeeting(@PathVariable Integer id) {
 		Meeting meeting = meetingService.getMeetingForId(id);
-		MeetingResponse meetingResponse = modelMapper.map(meeting, MeetingResponse.class);
-
-		EntityModel<MeetingResponse> meetingModel = EntityModel.of(meetingResponse, 
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingController.class).oneMeeting(id)).withSelfRel(),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingController.class).allMeetings(new HashMap<>())).withRel("meetings"),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(MeetingCategoryController.class).OneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
-				WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(UserController.class).OneUser(meetingResponse.getUserId())).withRel("user")
-				);
-
-		return meetingModel;
+		return meetingModelAssembler.toModel(meeting);
 	}
 
 	@PostMapping
