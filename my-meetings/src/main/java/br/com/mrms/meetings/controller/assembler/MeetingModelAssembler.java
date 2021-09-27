@@ -16,25 +16,43 @@ import br.com.mrms.meetings.controller.MeetingController;
 import br.com.mrms.meetings.controller.UserController;
 import br.com.mrms.meetings.controller.response.MeetingResponse;
 import br.com.mrms.meetings.model.Meeting;
+import br.com.mrms.meetings.model.MeetingStatus;
 
 @Component
 public class MeetingModelAssembler implements RepresentationModelAssembler<Meeting, EntityModel<MeetingResponse>> {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Override
 	public EntityModel<MeetingResponse> toModel(Meeting meeting) {
-		
+
 		MeetingResponse meetingResponse = modelMapper.map(meeting, MeetingResponse.class);
-		
-		EntityModel<MeetingResponse> meetingModel = EntityModel.of(meetingResponse, 
+
+		EntityModel<MeetingResponse> meetingModel = EntityModel.of(meetingResponse,
 				linkTo(methodOn(MeetingController.class).oneMeeting(meetingResponse.getId())).withSelfRel(),
 				linkTo(methodOn(MeetingController.class).allMeetings(new HashMap<>())).withRel("meetings"),
-				linkTo(methodOn(MeetingCategoryController.class).OneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
-				linkTo(methodOn(UserController.class).OneUser(meetingResponse.getUserId())).withRel("user")
-				);
+				linkTo(methodOn(MeetingCategoryController.class)
+						.OneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
+				linkTo(methodOn(UserController.class).OneUser(meetingResponse.getUserId())).withRel("user"));
+
+		if (MeetingStatus.START.equals(meeting.getStatus())) {
+			meetingModel.add(linkTo(methodOn(MeetingController.class).finishMeeting(meeting.getId())).withRel("finish"),
+					linkTo(methodOn(MeetingController.class).cancelMeeting(meeting.getId())).withRel("canceled"));
+		}
+
+		if (MeetingStatus.OPEN.equals(meeting.getStatus())) {
+			meetingModel.add(linkTo(methodOn(MeetingController.class).startMeeting(meeting.getId())).withRel("start"));
+		}
 		
+		if (MeetingStatus.CANCELED.equals(meeting.getStatus())) {
+			meetingModel.add(linkTo(methodOn(MeetingController.class).openMeeting(meeting.getId())).withRel("open"));
+		}
+
+		if (MeetingStatus.FINISH.equals(meeting.getStatus())) {
+			meetingModel.add(linkTo(methodOn(MeetingController.class).openMeeting(meeting.getId())).withRel("open"));
+		}
+
 		
 		return meetingModel;
 	}

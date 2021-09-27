@@ -1,6 +1,7 @@
 package br.com.mrms.meetings.controller;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +42,7 @@ public class MeetingController {
 	private ModelMapper modelMapper;
 
 	@Autowired
-	private MeetingModelAssembler meetingModelAssembler;
+	private MeetingModelAssembler assembler;
 
 	@GetMapping
 	public CollectionModel<EntityModel<MeetingResponse>> allMeetings(@RequestParam Map<String, String> paramets) {
@@ -53,7 +54,7 @@ public class MeetingController {
 			String description = paramets.get("descricao");
 			listMeeting = meetingService.getMeetingsForDescription("%" + description + "%");
 		}
-		List<EntityModel<MeetingResponse>> meetingModel = listMeeting.stream().map(meetingModelAssembler::toModel)
+		List<EntityModel<MeetingResponse>> meetingModel = listMeeting.stream().map(assembler::toModel)
 				.collect(Collectors.toList());
 		
 		return CollectionModel.of(meetingModel,
@@ -63,7 +64,7 @@ public class MeetingController {
 	@GetMapping("/{id}")
 	public EntityModel<MeetingResponse> oneMeeting(@PathVariable Integer id) {
 		Meeting meeting = meetingService.getMeetingForId(id);
-		return meetingModelAssembler.toModel(meeting);
+		return assembler.toModel(meeting);
 	}
 
 	@PostMapping
@@ -84,23 +85,27 @@ public class MeetingController {
 	}
 
 	@PutMapping("/{id}/start")
-	public MeetingResponse startMeeting(@PathVariable Integer id) {
-		return modelMapper.map(meetingService.startMeetingForId(id), MeetingResponse.class);
+	public EntityModel<MeetingResponse> startMeeting(@PathVariable Integer id) {
+		Meeting meeting = meetingService.startMeetingForId(id);
+		return assembler.toModel(meeting);
 	}
 
 	@PutMapping("/{id}/finish")
-	public MeetingResponse finishMeeting(@PathVariable Integer id) {
-		return modelMapper.map(meetingService.finishMeetingForId(id), MeetingResponse.class);
+	public EntityModel<MeetingResponse> finishMeeting(@PathVariable Integer id) {
+		Meeting meeting = meetingService.finishMeetingForId(id);
+		return assembler.toModel(meeting);
 	}
 
 	@PutMapping("/{id}/canceled")
-	public MeetingResponse cancelMeeting(@PathVariable Integer id) {
-		return modelMapper.map(meetingService.cancelMeetingForId(id), MeetingResponse.class);
+	public EntityModel<MeetingResponse> cancelMeeting(@PathVariable Integer id) {
+		Meeting meeting = meetingService.cancelMeetingForId(id);
+		return assembler.toModel(meeting);
 	}
 
 	@PutMapping("/{id}/open")
-	public MeetingResponse openMeeting(@PathVariable Integer id) {
-		return modelMapper.map(meetingService.openMeetingForId(id), MeetingResponse.class);
+	public EntityModel<MeetingResponse> openMeeting(@PathVariable Integer id) {
+		Meeting meeting = meetingService.openMeetingForId(id);
+		return assembler.toModel(meeting);
 	}
 
 }
