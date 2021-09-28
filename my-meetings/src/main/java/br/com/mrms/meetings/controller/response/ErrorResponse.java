@@ -12,4 +12,10 @@ public class ErrorResponse {
 	private String field;
 
 	private String message;
+
+	public ErrorResponse(String message) {
+		this.message = message;
+	}
+	
+	
 }

@@ -49,7 +49,7 @@ public class MeetingService {
 		Meeting meeting = getMeetingForId(id);
 
 		if (!MeetingStatus.OPEN.equals(meeting.getStatus()))
-			throw new MeetingStatusException();
+			throw new MeetingStatusException("Unable to start task with status " + meeting.getStatus().name());
 
 		meeting.setStatus(MeetingStatus.START);
 		return saveMeeting(meeting);
@@ -59,7 +59,7 @@ public class MeetingService {
 		Meeting meeting = getMeetingForId(id);
 
 		if (MeetingStatus.CANCELED.equals(meeting.getStatus()))
-			throw new MeetingStatusException();
+			throw new MeetingStatusException("Unable to complete a canceled task ");
 
 		meeting.setStatus(MeetingStatus.FINISH);
 		return saveMeeting(meeting);
@@ -69,7 +69,7 @@ public class MeetingService {
 		Meeting meeting = getMeetingForId(id);
 
 		if (MeetingStatus.FINISH.equals(meeting.getStatus()))
-			throw new MeetingStatusException();
+			throw new MeetingStatusException("Unable to cancel a completed task");
 
 		meeting.setStatus(MeetingStatus.CANCELED);
 		return saveMeeting(meeting);
@@ -79,7 +79,7 @@ public class MeetingService {
 		Meeting meeting = getMeetingForId(id);
 
 		if (MeetingStatus.OPEN.equals(meeting.getStatus()))
-			throw new MeetingStatusException();
+			throw new MeetingStatusException("Unable to open an already open task");
 
 		meeting.setStatus(MeetingStatus.OPEN);
 		return saveMeeting(meeting);
