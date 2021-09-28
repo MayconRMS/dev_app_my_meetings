@@ -1,6 +1,6 @@
 package br.com.mrms.meetings.exception;
 
-public class MeetingStatusException extends RuntimeException{
+public class MeetingStatusException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
@@ -24,7 +24,4 @@ public class MeetingStatusException extends RuntimeException{
 	public MeetingStatusException(Throwable cause) {
 		super(cause);
 	}
-
-	
-	
 }
