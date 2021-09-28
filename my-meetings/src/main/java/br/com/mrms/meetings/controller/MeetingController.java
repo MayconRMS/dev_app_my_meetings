@@ -15,6 +15,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,7 +58,7 @@ public class MeetingController {
 		}
 		List<EntityModel<MeetingResponse>> meetingModel = listMeeting.stream().map(assembler::toModel)
 				.collect(Collectors.toList());
-		
+
 		return CollectionModel.of(meetingModel,
 				linkTo(methodOn(MeetingController.class).allMeetings(new HashMap<>())).withSelfRel());
 	}
@@ -68,9 +70,12 @@ public class MeetingController {
 	}
 
 	@PostMapping
-	public MeetingResponse saveMeeting(@Valid @RequestBody MeetingRequest meetingRequest) {
+	public ResponseEntity<EntityModel<MeetingResponse>> saveMeeting(@Valid @RequestBody MeetingRequest meetingRequest) {
 		Meeting meeting = modelMapper.map(meetingRequest, Meeting.class);
-		return modelMapper.map(meetingService.saveMeeting(meeting), MeetingResponse.class);
+		Meeting newMeeting = meetingService.saveMeeting(meeting);
+
+		EntityModel<MeetingResponse> meetingModel = assembler.toModel(newMeeting);
+		return ResponseEntity.created(meetingModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(meetingModel);
 	}
 
 	@PutMapping("/{id}")
