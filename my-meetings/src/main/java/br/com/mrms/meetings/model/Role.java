@@ -9,13 +9,16 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "roles")
+@NoArgsConstructor
 public class Role {
 
 	@Id
@@ -26,4 +29,7 @@ public class Role {
 	@Column(length = 20)
 	private ERole name;
 
+	public Role(ERole name) {
+		this.name = name;
+	}
 }

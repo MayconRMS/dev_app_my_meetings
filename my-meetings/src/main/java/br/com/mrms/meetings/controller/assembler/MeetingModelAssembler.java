@@ -33,8 +33,8 @@ public class MeetingModelAssembler implements RepresentationModelAssembler<Meeti
 				linkTo(methodOn(MeetingController.class).oneMeeting(meetingResponse.getId())).withSelfRel(),
 				linkTo(methodOn(MeetingController.class).allMeetings(new HashMap<>())).withRel("meetings"),
 				linkTo(methodOn(MeetingCategoryController.class)
-						.OneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
-				linkTo(methodOn(UserController.class).OneUser(meetingResponse.getUserId())).withRel("user"));
+						.oneMeetingCategory(meetingResponse.getMeetingCategoryId())).withRel("meetingCategory"),
+				linkTo(methodOn(UserController.class).oneUser(meetingResponse.getUserId())).withRel("user"));
 
 		if (MeetingStatus.START.equals(meeting.getStatus())) {
 			meetingModel.add(linkTo(methodOn(MeetingController.class).finishMeeting(meeting.getId())).withRel("finish"),
