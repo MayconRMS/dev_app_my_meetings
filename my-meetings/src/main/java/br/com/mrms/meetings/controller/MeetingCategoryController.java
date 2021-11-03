@@ -1,6 +1,10 @@
 package br.com.mrms.meetings.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -9,6 +13,11 @@ import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +26,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.mrms.meetings.controller.assembler.CategoryModelAssembler;
 import br.com.mrms.meetings.controller.request.MeetingCategoryRequest;
 import br.com.mrms.meetings.controller.response.MeetingCategoryResponse;
 import br.com.mrms.meetings.model.MeetingCategory;
@@ -32,10 +43,14 @@ public class MeetingCategoryController {
 	private MeetingCategoryService meetingCategoryService;
 
 	@Autowired
+	private CategoryModelAssembler assembler;
+
+	@Autowired
 	private ModelMapper modelMapper;
 
 	@GetMapping
-	public List<MeetingCategoryResponse> allMeetingsCategory(@RequestParam Map<String, String> paramets) {
+	public CollectionModel<EntityModel<MeetingCategoryResponse>> allMeetingsCategory(
+			@RequestParam Map<String, String> paramets) {
 		List<MeetingCategory> listMeetingCategory = new ArrayList<>();
 
 		if (paramets.isEmpty()) {
@@ -44,33 +59,41 @@ public class MeetingCategoryController {
 			String name = paramets.get("name");
 			listMeetingCategory = meetingCategoryService.getMeetingsCategoryForName("%" + name + "%");
 		}
-		return listMeetingCategory.stream()
-				.map(meetingCategory -> modelMapper.map(meetingCategory, MeetingCategoryResponse.class))
-				.collect(Collectors.toList());
+
+		List<EntityModel<MeetingCategoryResponse>> meetingCategoryModel = listMeetingCategory.stream()
+				.map(assembler::toModel).collect(Collectors.toList());
+
+		return CollectionModel.of(meetingCategoryModel,
+				linkTo(methodOn(MeetingCategoryController.class).allMeetingsCategory(new HashMap<>())).withSelfRel());
 	}
 
 	@GetMapping("/{id}")
-	public MeetingCategoryResponse OneMeetingCategory(@PathVariable Integer id) {
+	public EntityModel<MeetingCategoryResponse> oneMeetingCategory(@PathVariable Integer id) {
 		MeetingCategory meetingCategory = meetingCategoryService.getMeetingCategoryForId(id);
-		return modelMapper.map(meetingCategory, MeetingCategoryResponse.class);
+		return assembler.toModel(meetingCategory);
 	}
 
 	@PostMapping
-	public MeetingCategoryResponse saveMeetingCategory(@Valid @RequestBody MeetingCategoryRequest meetingCategoryRequest) {
+	public ResponseEntity<EntityModel<MeetingCategoryResponse>> saveMeetingCategory(
+			@Valid @RequestBody MeetingCategoryRequest meetingCategoryRequest) {
 		MeetingCategory meetingCategory = modelMapper.map(meetingCategoryRequest, MeetingCategory.class);
-		return modelMapper.map(meetingCategoryService.saveMeetingCategory(meetingCategory),
-				MeetingCategoryResponse.class);
+		MeetingCategory categorySave = meetingCategoryService.saveMeetingCategory(meetingCategory);
+		EntityModel<MeetingCategoryResponse> meetingCategoryModel = assembler.toModel(categorySave);
+		return ResponseEntity.created(meetingCategoryModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+				.body(meetingCategoryModel);
 	}
 
 	@PutMapping("/{id}")
-	public MeetingCategoryResponse updateMeetingCategory(@RequestBody MeetingCategoryRequest meetingCategoryRequest,
-			@PathVariable Integer id) {
+	public ResponseEntity<EntityModel<MeetingCategoryResponse>> updateMeetingCategory(
+			@RequestBody MeetingCategoryRequest meetingCategoryRequest, @PathVariable Integer id) {
 		MeetingCategory meetingCategory = modelMapper.map(meetingCategoryRequest, MeetingCategory.class);
-		return modelMapper.map(meetingCategoryService.updateMeetingCategory(id, meetingCategory),
-				MeetingCategoryResponse.class);
+		MeetingCategory categorySave = meetingCategoryService.updateMeetingCategory(id, meetingCategory);
+		EntityModel<MeetingCategoryResponse> meetingCategoryModel = assembler.toModel(categorySave);
+		return ResponseEntity.ok().body(meetingCategoryModel);
 	}
 
 	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteMeetingCategory(@PathVariable Integer id) {
 		meetingCategoryService.deleteMeetingCategoryforId(id);
 
